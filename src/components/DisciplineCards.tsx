@@ -1,60 +1,83 @@
-import { useEffect, useState } from "react";
-import { getAllDisciplines } from "../services/disciplineService";
-import { Discipline } from "../types/Discipline";
+import { DisciplineWithCheck } from "../types/DisciplineWithCheck";
+import SemesterCheckbox from "./SemesterCheckbox";
 import SubjectCheckbox from "./SubjectCheckbox";
 
+type DisciplineCardsProps = {
+  obrigatorias: DisciplineWithCheck[];
+  setObrigatorias: (disciplines: DisciplineWithCheck[]) => void;
+};
 
-const DisciplineCards = () => {
-  const [obrigatorias, setObrigatorias] = useState<Discipline[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+const DisciplineCards = ({ obrigatorias, setObrigatorias }: DisciplineCardsProps) => {
+  if (obrigatorias.length === 0) return <p>Carregando...</p>;
 
-  useEffect(() => {
-    const fetchDisciplines = async () => {
-      const disciplines = await getAllDisciplines();
+  const handleCheckboxToggle = (id: string) => {
+    const updatedDisciplines = obrigatorias.map((d) =>
+      d.id === id ? { ...d, check: !d.check } : d
+    );
 
-      if (disciplines) {
-        setObrigatorias(disciplines);
-      }
-      setLoading(false);
-    };
+    setObrigatorias(updatedDisciplines);
+    localStorage.setItem("obrigatorias", JSON.stringify(updatedDisciplines));
 
-    fetchDisciplines();
-  }, []);
+    const selectedDisciplines = updatedDisciplines.filter((d) => d.check);
+    localStorage.setItem("selectedDisciplines", JSON.stringify(selectedDisciplines));
+  };
 
-  // Organiza as disciplinas por semestre
-  const disciplinesBySemester = obrigatorias.reduce((acc, discipline) => {
-    if (!acc[discipline.semester]) {
-      acc[discipline.semester] = [];
-    }
-    acc[discipline.semester].push(discipline);
-    return acc;
-  }, {} as { [key: number]: Discipline[] });
+  const handleToggleAll = (semester: number) => {
+    const allChecked = obrigatorias.filter(d => d.semester === semester).every(d => d.check);
 
-  if (loading) return <p>Carregando...</p>;
+    const updatedDisciplines = obrigatorias.map((d) =>
+      d.semester === semester ? { ...d, check: !allChecked } : d
+    );
+
+    setObrigatorias(updatedDisciplines);
+    localStorage.setItem("obrigatorias", JSON.stringify(updatedDisciplines));
+
+    const selectedDisciplines = updatedDisciplines.filter((d) => d.check);
+    localStorage.setItem("selectedDisciplines", JSON.stringify(selectedDisciplines));
+  };
+
+  // Cria a lista de semestres de forma única e ordenada
+  const semesters = [...new Set(obrigatorias.map(d => d.semester))];
+  
+  // Adiciona o semestre 5 manualmente, se não estiver presente
+  if (!semesters.includes(5)) semesters.push(5);
+  
+  // Ordena os semestres em ordem crescente
+  semesters.sort((a, b) => a - b);
 
   return (
     <div className="flex flex-wrap justify-center items-center gap-9 font-base">
-      {Object.entries(disciplinesBySemester).map(([semester, disciplines]) => (
-        <div
-          key={semester}
-          className="w-full max-w-[306px] h-full min-h-[300px] max-h-[300px] bg-white border border-transparent rounded-2xl"
-        >
-          <h3 className="text-center md:text-xl text-white font-bold bg-color-orange rounded-t-lg md:p-2">
-            Semestre {semester}
-          </h3>
-          {disciplines.map((discipline) => (
-            <div
-              key={discipline.id}
-              className="flex gap-x-1.5 jus items-center md:py-1.5 md:px-2.5"
-            >
-              <SubjectCheckbox />
-              <p className="md:text-lg text-color-font-base ">
-                {discipline.name.toLocaleLowerCase()}
+      {semesters.map(semester => {
+        const semesterDisciplines = obrigatorias.filter(d => d.semester === semester);
+        const allChecked = semesterDisciplines.every(d => d.check);
+
+        return (
+          <div key={semester} className="w-full max-w-[306px] h-full min-h-[345px] max-h-[345px] bg-white border border-transparent rounded-2xl">
+            <h3 className="text-center md:text-xl text-white font-bold bg-color-orange rounded-t-lg md:p-2">
+              Semestre {semester}
+            </h3>
+            {semester === 5 && semesterDisciplines.length === 0 ? (
+              <p className=" md:text-lg text-color-font-base p-4">
+                Nenhuma obrigatória aqui! Nessa você escapou!
               </p>
-            </div>
-          ))}
-        </div>
-      ))}
+            ) : (
+              <>
+                {semesterDisciplines.length > 0 && (
+                  <div className="flex md:py-1.5 md:px-2.5">
+                    <SemesterCheckbox checked={allChecked} onToggleAll={() => handleToggleAll(semester)} />
+                  </div>
+                )}
+                {semesterDisciplines.map(discipline => (
+                  <div key={discipline.id} className="flex gap-x-1.5 items-center md:py-1.5 md:px-2.5">
+                    <SubjectCheckbox checked={discipline.check} onToggle={() => handleCheckboxToggle(discipline.id)} />
+                    <p className="md:text-lg text-color-font-base">{discipline.name.toLowerCase()}</p>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };
