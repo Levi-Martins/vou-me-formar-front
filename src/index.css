@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import "tailwindcss";
+
+@theme{
+  /* tipografia */
+  --font-base: 'Inter', sans-serif;
+  --color-color-font-base: #7A5F2A;
+  --color-background-semester: #FFF8E0;
+  --color-color-font-pink: #FF5894;
+  --color-color-orange: #FF7E35;
+}
