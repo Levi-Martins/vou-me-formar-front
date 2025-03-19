@@ -16,7 +16,7 @@ const SemesterCheckbox = ({ checked, onToggleAll }: SemesterCheckboxProps) => {
       <div
         className={`flex justify-center items-center min-w-6 max-w-6 min-h-6 max-h-6 border-2 border-color-font-base rounded-2xl cursor-pointer`}
       >
-        {checked && <img src={checkPng} alt="" className='pr-[0.25px]' />}
+        {checked && <img src={checkPng} alt="" />}
       </div>
       
       {/* Texto indicando ação */}

@@ -46,13 +46,13 @@ const DisciplineCards = ({ obrigatorias, setObrigatorias }: DisciplineCardsProps
   semesters.sort((a, b) => a - b);
 
   return (
-    <div className="flex flex-wrap justify-center items-center gap-9 font-base">
+    <div className="flex flex-wrap justify-center items-center gap-9 font-base w-full">
       {semesters.map(semester => {
         const semesterDisciplines = obrigatorias.filter(d => d.semester === semester);
         const allChecked = semesterDisciplines.every(d => d.check);
 
         return (
-          <div key={semester} className="w-full max-w-[306px] h-full min-h-[345px] max-h-[345px] bg-white border border-transparent rounded-2xl">
+          <div key={semester} className="w-full max-w-[305px] h-full min-h-[345px] max-h-[345px] bg-white shadow-lg border border-transparent rounded-2xl">
             <h3 className="text-center md:text-xl text-white font-bold bg-color-orange rounded-t-lg md:p-2">
               Semestre {semester}
             </h3>
@@ -68,7 +68,7 @@ const DisciplineCards = ({ obrigatorias, setObrigatorias }: DisciplineCardsProps
                   </div>
                 )}
                 {semesterDisciplines.map(discipline => (
-                  <div key={discipline.id} className="flex gap-x-1.5 items-center md:py-1.5 md:px-2.5">
+                  <div key={discipline.id} className="flex gap-x-1.5 items-center md:py-1.5 md:px-2.5 ">
                     <SubjectCheckbox checked={discipline.check} onToggle={() => handleCheckboxToggle(discipline.id)} />
                     <p className="md:text-lg text-color-font-base">{discipline.name.toLowerCase()}</p>
                   </div>
