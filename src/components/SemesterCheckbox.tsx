@@ -1,9 +1,6 @@
-import checkPng from '../assets/checkbox-all-true.png'
-
-
 type SemesterCheckboxProps = {
-  checked: boolean; 
-  onToggleAll: () => void; 
+  checked: boolean;
+  onToggleAll: () => void;
 };
 
 const SemesterCheckbox = ({ checked, onToggleAll }: SemesterCheckboxProps) => {
@@ -13,12 +10,12 @@ const SemesterCheckbox = ({ checked, onToggleAll }: SemesterCheckboxProps) => {
       onClick={onToggleAll}
     >
       {/* Checkbox visual */}
-      <div
-        className={`flex justify-center items-center min-w-6 max-w-6 min-h-6 max-h-6 border-2 border-color-font-base rounded-2xl cursor-pointer`}
-      >
-        {checked && <img src={checkPng} alt="" />}
+      <div className="relative w-6 h-6 border-2 border-color-font-base rounded-2xl cursor-pointer">
+        {checked && (
+          <div className="absolute top-1/2 left-1/2 w-[15px] h-[15px] bg-[#FF71A6] rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+        )}
       </div>
-      
+
       {/* Texto indicando ação */}
       <span className="text-color-font-base font-semibold">
         {checked ? "Desmarcar todas" : "Marcar todas"}

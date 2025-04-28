@@ -1,7 +1,7 @@
 import api from "../api/api";
 import { DisciplineResponse, Discipline } from "../types/Discipline";
 
-export const gerAllObligatoryDisciplines = async (): Promise<Discipline[]> => {
+export const getAllObligatoryDisciplines = async (): Promise<Discipline[]> => {
   let allDisciplines: Discipline[] = [];
   let page = 0;
   const size = 10;
