@@ -4,13 +4,20 @@ import { Sun, Moon } from "lucide-react";
 import logo from "../../assets/logo.png";
 import bgDay from "../../assets/bg-day.png";
 import bgNight from "../../assets/bg-night.png";
+import GenericPopup from "../../components/GenericPopup";
 
 export default function ShiftSelector() {
   const [isNight, setIsNight] = useState(false);
   const [initialized, setInitialized] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   const ShiftChange = () => {
     setIsNight((prev) => !prev);
+    handlePopupClose();
+  };
+
+  const handlePopupClose = () => {
+    setShowPopup(false);
   };
 
   useEffect(() => {
@@ -43,7 +50,9 @@ export default function ShiftSelector() {
       </div>
 
       <div className="flex flex-col items-center justify-center text-[#F6F6F6] font-bold gap-12 h-screen text-center">
-        <h1 className="text-[95px] font-heading font-semibold">Escolha seu turno</h1>
+        <h1 className="text-[95px] font-heading font-semibold">
+          Escolha seu turno
+        </h1>
         <div className="flex items-center gap-14 text-[50px]">
           <p className="font-heading font-semibold">Diurno</p>
           <div className="relative w-[200px] h-[50px] bg-white rounded-full flex items-center px-2 cursor-pointer">
@@ -51,7 +60,7 @@ export default function ShiftSelector() {
               className={`absolute w-[70px] h-[70px] rounded-full flex items-center justify-center transition-transform ${
                 isNight ? "translate-x-[130px]" : "translate-x-[-10px]"
               } bg-[#FE8B01]`}
-              onClick={ShiftChange}
+              onClick={() => setShowPopup(true)}
             >
               {isNight ? (
                 <Moon className="text-white w-8 h-8" />
@@ -71,6 +80,17 @@ export default function ShiftSelector() {
           </Link>
         </div>
       </div>
+
+      <GenericPopup
+        open={showPopup}
+        onClose={handlePopupClose}
+        title="Tem certeza de que deseja mudar o turno?"
+        message="Todas as informações adicionadas serão perdidas e essa ação não poderá ser desfeita!"
+        confirmText="Mudar turno"
+        cancelText="Não mudar"
+        onConfirm={ShiftChange}
+        shift={!isNight}
+      />
     </section>
   );
 }
